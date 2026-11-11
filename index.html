@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sesión 11 · ¿Qué se lleva la gente de tu show? · Diseño de Proyectos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#FBFAF7; --surface:#FFFFFF; --ink:#22282B; --teal:#0F5C5B; --teal-soft:#14807E;
+  --amber:#D6772E; --amber-light:#E8A85C; --mid:#6E7679; --border:#E4E1D9;
+  --disp:'Space Grotesk',sans-serif; --body:'IBM Plex Sans',sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bone);color:var(--ink);font-family:var(--body)}
+.deck{position:relative;width:100vw;height:100vh}
+.slide{position:absolute;inset:0;padding:5.5vh 6vw 9vh;display:flex;flex-direction:column;justify-content:center;opacity:0;visibility:hidden;transition:opacity .35s ease;overflow:hidden}
+.slide.active{opacity:1;visibility:visible}
+
+/* tipografía */
+.kicker{font-family:var(--mono);font-size:clamp(11px,1.05vw,14px);letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:1.6vh;font-weight:500}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,3.6vw,54px);line-height:1.05;letter-spacing:-.02em;margin-bottom:2.2vh}
+h2{font-family:var(--disp);font-weight:600;font-size:clamp(18px,1.7vw,26px);line-height:1.2;margin-bottom:1vh}
+p,li{font-size:clamp(14px,1.3vw,20px);line-height:1.5}
+.lead{font-size:clamp(16px,1.55vw,23px);color:var(--mid);max-width:62ch}
+.amber{color:var(--amber)} .teal{color:var(--teal)}
+.fuente-pie{position:absolute;left:6vw;bottom:5.2vh;font-family:var(--mono);font-size:clamp(9px,.8vw,11.5px);color:var(--mid);max-width:80vw;line-height:1.4}
+
+/* portada */
+.slide-portada{background:var(--bone);padding-left:10vw}
+.slide-portada::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2.2vw;background:var(--amber)}
+.slide-portada .curso{font-family:var(--mono);font-size:clamp(11px,1vw,14px);letter-spacing:.14em;text-transform:uppercase;color:var(--mid);margin-bottom:5vh}
+.slide-portada h1{font-size:clamp(38px,5.4vw,84px);max-width:16ch}
+.slide-portada .sub{font-family:var(--disp);font-size:clamp(18px,1.8vw,28px);color:var(--teal);margin-bottom:5vh}
+.slide-portada .meta{display:flex;gap:3vw;font-family:var(--mono);font-size:clamp(11px,1vw,14px);color:var(--mid)}
+.slide-portada .meta b{color:var(--ink);font-weight:600}
+
+/* dark */
+.slide-dark{background:var(--ink);color:var(--bone)}
+.slide-dark .kicker{color:var(--amber-light)}
+.slide-dark h1{color:var(--bone);font-size:clamp(32px,4.4vw,68px);max-width:20ch}
+.slide-dark .lead{color:#B9BFC1}
+.slide-dark .fuente-pie{color:#8D9496}
+
+/* header / índice */
+.indice{display:grid;grid-template-columns:repeat(6,1fr);gap:1vw;margin-top:3vh}
+.indice .it{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--teal);padding:2vh 1.1vw;min-height:20vh;display:flex;flex-direction:column;gap:1vh}
+.indice .it.amb{border-top-color:var(--amber)}
+.indice .num{font-family:var(--mono);font-size:clamp(10px,.9vw,13px);color:var(--mid)}
+.indice .tt{font-family:var(--disp);font-weight:600;font-size:clamp(14px,1.3vw,20px);line-height:1.15}
+.indice .mm{font-family:var(--mono);font-size:clamp(10px,.85vw,12px);color:var(--teal);margin-top:auto}
+
+/* concepto */
+.concepto-wrap{display:grid;gap:1.4vw;margin-top:1vh}
+.c2{grid-template-columns:1fr 1fr} .c3{grid-template-columns:repeat(3,1fr)}
+.fuente{background:var(--surface);border:1px solid var(--border);padding:3vh 1.8vw;border-left:4px solid var(--teal)}
+.fuente.amb{border-left-color:var(--amber)}
+.fuente .tag{font-family:var(--mono);font-size:clamp(10px,.85vw,12px);letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin-bottom:1vh}
+.fuente p{color:var(--ink)}
+.big-fig{font-family:var(--mono);font-weight:600;font-size:clamp(26px,3vw,46px);color:var(--teal);line-height:1;margin-bottom:1vh}
+.fuente.amb .big-fig{color:var(--amber)}
+
+/* cadena */
+.cadena{display:flex;align-items:stretch;gap:0;margin-top:2vh}
+.eslabon{flex:1;background:var(--surface);border:1px solid var(--border);padding:2.6vh 1.2vw;display:flex;flex-direction:column;gap:1vh}
+.eslabon .paso{font-family:var(--mono);font-size:clamp(10px,.85vw,12px);color:var(--mid);letter-spacing:.08em;text-transform:uppercase}
+.eslabon .nom{font-family:var(--disp);font-weight:600;font-size:clamp(15px,1.45vw,22px);line-height:1.15}
+.eslabon .val{font-family:var(--mono);font-size:clamp(11px,1vw,14px);color:var(--teal);margin-top:auto}
+.eslabon.final{background:var(--ink);color:var(--bone);border-color:var(--ink)}
+.eslabon.final .val{color:var(--amber-light)} .eslabon.final .paso{color:#9AA1A3}
+.flecha{display:flex;align-items:center;padding:0 .6vw;font-family:var(--mono);color:var(--amber);font-size:clamp(16px,1.6vw,24px)}
+.nota-cadena{margin-top:2.4vh;font-size:clamp(13px,1.15vw,17px);color:var(--mid)}
+
+/* ámbitos 2x2 */
+.ambitos{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr auto;gap:.8vw;flex:1;max-height:62vh;margin-top:1vh}
+.ambitos .eje{font-family:var(--mono);font-size:clamp(10px,.85vw,12px);letter-spacing:.1em;text-transform:uppercase;color:var(--mid);display:flex;align-items:center;justify-content:center}
+.ambitos .eje.v{writing-mode:vertical-rl;transform:rotate(180deg)}
+.ambitos .q{background:var(--surface);border:1px solid var(--border);padding:2.2vh 1.4vw;display:flex;flex-direction:column;gap:.8vh}
+.ambitos .q .t{font-family:var(--disp);font-weight:700;font-size:clamp(18px,1.9vw,30px)}
+.ambitos .q .d{font-family:var(--mono);font-size:clamp(10px,.9vw,13px);color:var(--mid)}
+.ambitos .q p{font-size:clamp(13px,1.15vw,17px)}
+.ambitos .q.ent{border-top:4px solid var(--teal)}
+.ambitos .q.edu{border-top:4px solid var(--teal-soft)}
+.ambitos .q.est{border-top:4px solid var(--amber-light)}
+.ambitos .q.esc{border-top:4px solid var(--amber);background:#FFF8F1}
+
+/* caso */
+.caso-wrap{display:grid;grid-template-columns:1.45fr 1fr;gap:3vw;align-items:start}
+.caso-wrap ul{list-style:none;display:flex;flex-direction:column;gap:1.5vh}
+.caso-wrap li{padding-left:1.4vw;position:relative}
+.caso-wrap li::before{content:"";position:absolute;left:0;top:.62em;width:.55vw;height:.55vw;min-width:6px;min-height:6px;background:var(--amber)}
+.letra-chica{margin-top:2.4vh;border-left:3px solid var(--amber);padding:1.2vh 1.2vw;background:#FFF8F1;font-size:clamp(13px,1.15vw,17px)}
+.letra-chica b{font-family:var(--mono);font-size:.82em;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:.4vh}
+.datos{background:var(--ink);color:var(--bone);padding:3vh 1.8vw;display:flex;flex-direction:column;gap:2.2vh}
+.datos .dt{font-family:var(--mono);font-size:clamp(10px,.85vw,12px);letter-spacing:.12em;text-transform:uppercase;color:#9AA1A3;border-bottom:1px solid #3A4245;padding-bottom:1vh}
+.dato-fig .n{font-family:var(--mono);font-weight:600;font-size:clamp(24px,2.7vw,42px);color:var(--amber-light);line-height:1}
+.dato-fig .l{font-size:clamp(12px,1vw,15px);color:#C9CED0;margin-top:.5vh}
+.datos .src{font-family:var(--mono);font-size:clamp(9px,.75vw,11px);color:#8D9496;line-height:1.4}
+
+/* díptico */
+.diptico{display:grid;grid-template-columns:1fr 1fr;gap:2vw;margin-top:1vh}
+.dcaso{background:var(--surface);border:1px solid var(--border);padding:3.4vh 2vw;display:flex;flex-direction:column;gap:1.2vh}
+.dcaso .who{font-family:var(--mono);font-size:clamp(10px,.9vw,13px);letter-spacing:.1em;text-transform:uppercase;color:var(--mid)}
+.dcaso .how{font-family:var(--disp);font-weight:700;font-size:clamp(22px,2.4vw,36px);line-height:1.05}
+.dcaso.a{border-top:5px solid var(--teal)} .dcaso.a .how{color:var(--teal)}
+.dcaso.b{border-top:5px solid var(--amber)} .dcaso.b .how{color:var(--amber)}
+
+/* arco */
+.arco-box{background:var(--surface);border:1px solid var(--border);padding:2vh 2vw;margin-top:1vh}
+.arco-box svg{width:100%;height:auto;display:block;max-height:44vh}
+
+/* taller / trabajo en clase */
+.taller-wrap{background:var(--ink);color:var(--bone);padding:4vh 3vw;display:grid;grid-template-columns:1fr 1.3fr;gap:3vw}
+.taller-wrap .kicker{color:var(--amber-light)}
+.taller-wrap h1{color:var(--bone);font-size:clamp(26px,3vw,46px)}
+.taller-wrap .tiempo{font-family:var(--mono);color:var(--amber-light);font-size:clamp(12px,1.05vw,15px)}
+.steps{display:flex;flex-direction:column;gap:1.6vh;list-style:none}
+.steps li{display:grid;grid-template-columns:auto 1fr;gap:1vw;align-items:start;color:#E3E6E7}
+.steps .sn{font-family:var(--mono);font-weight:600;color:var(--ink);background:var(--amber-light);width:2.2em;height:2.2em;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,1vw,14px)}
+.casos-chip{display:flex;flex-wrap:wrap;gap:.6vw;margin-top:2vh}
+.casos-chip span{font-family:var(--mono);font-size:clamp(10px,.9vw,13px);border:1px solid #4A5356;padding:.6vh .8vw;color:#C9CED0}
+
+/* tarea */
+.tarea-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:2.5vw;align-items:stretch}
+.tarea-main{background:var(--surface);border:1px solid var(--border);border-top:5px solid var(--amber);padding:3vh 2vw}
+.tarea-main ol{padding-left:1.4em;display:flex;flex-direction:column;gap:1vh;margin-top:1.4vh}
+.tarea-main li{font-size:clamp(13px,1.15vw,17px)}
+.tarea-side{display:flex;flex-direction:column;gap:1.4vw}
+.tarea-meta{background:var(--surface);border:1px solid var(--border);padding:2.4vh 1.6vw;font-family:var(--mono);font-size:clamp(11px,.95vw,14px);line-height:1.8}
+.tarea-meta b{color:var(--teal);font-weight:600}
+.tarea-bridge{background:var(--ink);color:var(--bone);padding:2.6vh 1.6vw;flex:1}
+.tarea-bridge .kicker{color:var(--amber-light);margin-bottom:1vh}
+.tarea-bridge p{color:#D5D9DA;font-size:clamp(13px,1.15vw,17px)}
+
+/* timeline antes/durante/después */
+.tl{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:2vh;border:1px solid var(--border);background:var(--surface)}
+.tl > div{padding:3vh 1.8vw;border-right:1px solid var(--border);min-height:26vh;display:flex;flex-direction:column;gap:1vh}
+.tl > div:last-child{border-right:none}
+.tl .m{font-family:var(--disp);font-weight:700;font-size:clamp(22px,2.4vw,36px)}
+.tl .q{font-family:var(--mono);font-size:clamp(11px,.95vw,14px);color:var(--teal)}
+.tl .ln{border-bottom:1px dashed var(--border);height:3.4vh}
+
+/* frase aplícalo */
+.frase{background:var(--surface);border:1px solid var(--border);border-left:6px solid var(--amber);padding:4vh 2.4vw;font-family:var(--disp);font-size:clamp(20px,2.3vw,36px);line-height:1.45;font-weight:500;max-width:60ch}
+.frase .blank{display:inline-block;min-width:9ch;border-bottom:3px solid var(--teal);margin:0 .2em}
+
+/* nav */
+.nav{position:fixed;bottom:2.2vh;right:2vw;display:flex;align-items:center;gap:.8vw;z-index:10}
+.nav button{width:40px;height:40px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:18px;cursor:pointer;font-family:var(--mono)}
+.nav button:hover{background:var(--teal);color:var(--bone);border-color:var(--teal)}
+.counter{font-family:var(--mono);font-size:13px;color:var(--mid);min-width:64px;text-align:center}
+body.on-dark .counter{color:#9AA1A3}
+body.on-dark .nav button{background:#2E3539;color:var(--bone);border-color:#3A4245}
+.progress{position:fixed;left:0;bottom:0;height:4px;background:var(--amber);transition:width .3s ease;z-index:10}
+.brand{position:fixed;top:2.4vh;right:2vw;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);z-index:10}
+body.on-dark .brand{color:#8D9496}
+</style>
+</head>
+<body>
+<div class="brand">Diseño de Proyectos · S11</div>
+<div class="deck" id="deck">
+
+<!-- 01 PORTADA -->
+<section class="slide slide-portada">
+  <div class="curso">Diseño de Proyectos · Economía creativa e industrias culturales · LMPC 7°</div>
+  <div class="kicker">Sesión 11 · U6 · Diseño de experiencias culturales (I)</div>
+  <h1>¿Qué se lleva la gente de tu show?</h1>
+  <div class="sub">Parámetros, interacción, emoción y narrativa</div>
+  <div class="meta"><span><b>Ed Turner</b></span><span>Subtemas 6.1 y 6.2</span><span>1.5 h · Presencial</span></div>
+</section>
+
+<!-- 02 APERTURA -->
+<section class="slide slide-dark">
+  <div class="kicker">Para arrancar</div>
+  <h1>¿Cuál es el mejor concierto al que has ido?</h1>
+  <p class="lead">Dime <span style="color:var(--amber-light)">una sola cosa</span> que recuerdes de ese día.</p>
+</section>
+
+<!-- 03 SETLIST -->
+<section class="slide">
+  <div class="kicker">Lo que acaba de pasar</div>
+  <h1>Nadie se acordó del setlist.<br><span class="teal">Se acordaron de momentos.</span></h1>
+  <p class="lead" style="margin-bottom:4vh">Con quién fueron, cuando se apagaron las luces, lo que gritó el artista, la fila. La música importa, pero lo que se queda es lo que viviste.</p>
+  <div class="fuente amb" style="max-width:70ch">
+    <div class="tag">Pregunta guía de hoy</div>
+    <p style="font-family:var(--disp);font-size:clamp(18px,1.9vw,28px);font-weight:600;line-height:1.3">¿Qué va a sentir, hacer y recordar la gente que vaya a tu show?</p>
+  </div>
+</section>
+
+<!-- 04 MAPA -->
+<section class="slide slide-header">
+  <div class="kicker">Mapa de la sesión</div>
+  <h1>De la puerta a la salida</h1>
+  <p class="lead">Hoy recorremos un show en el orden en que lo vive el público.</p>
+  <div class="indice">
+    <div class="it"><div class="num">B1</div><div class="tt">La experiencia también es un producto</div><div class="mm">Los 4 ámbitos</div></div>
+    <div class="it"><div class="num">B2</div><div class="tt">Antes</div><div class="mm">Expectativa y narrativa</div></div>
+    <div class="it"><div class="num">B3</div><div class="tt">Durante</div><div class="mm">Interacción y estética</div></div>
+    <div class="it amb"><div class="num">En clase</div><div class="tt">Baja el caso a tu escala</div><div class="mm">Equipos</div></div>
+    <div class="it"><div class="num">B4</div><div class="tt">Después</div><div class="mm">Lo que se llevan</div></div>
+    <div class="it amb"><div class="num">Cierre</div><div class="tt">Aplícalo a tu proyecto</div><div class="mm">Tarea</div></div>
+  </div>
+</section>
+
+<!-- 05 ESCALERA DEL VALOR -->
+<section class="slide">
+  <div class="kicker">B1 · La experiencia también es un producto</div>
+  <h1>La escalera del valor</h1>
+  <p class="lead">Pine y Gilmore lo explican con un pastel de cumpleaños. En cada escalón se cobra más, y lo que se vende cambia.</p>
+  <div class="cadena">
+    <div class="eslabon"><div class="paso">Materia prima</div><div class="nom">Ingredientes en casa</div><div class="val">centavos</div></div>
+    <div class="flecha">→</div>
+    <div class="eslabon"><div class="paso">Producto</div><div class="nom">Harina preparada</div><div class="val">un poco más</div></div>
+    <div class="flecha">→</div>
+    <div class="eslabon"><div class="paso">Servicio</div><div class="nom">Pastel de pastelería</div><div class="val">bastante más</div></div>
+    <div class="flecha">→</div>
+    <div class="eslabon final"><div class="paso">Experiencia</div><div class="nom">La fiesta completa</div><div class="val">y el pastel va de regalo</div></div>
+  </div>
+  <p class="nota-cadena">La gente ya no está pagando el pastel. Está pagando la fiesta.</p>
+  <div class="fuente-pie">Pine, B. J. y Gilmore, J. H. (1998). Welcome to the Experience Economy. Harvard Business Review, julio-agosto 1998.</div>
+</section>
+
+<!-- 06 EN MÚSICA -->
+<section class="slide">
+  <div class="kicker">B1 · Traducido a música</div>
+  <h1>La canción se volvió barata.<br><span class="amber">Estar ahí, no.</span></h1>
+  <div class="concepto-wrap c2" style="margin-top:2vh">
+    <div class="fuente">
+      <div class="tag">Lo que vale poco</div>
+      <div class="big-fig">fracciones de centavo</div>
+      <p>Lo que paga una reproducción en streaming. Es la conversación de monetización que vimos en la U2.</p>
+    </div>
+    <div class="fuente amb">
+      <div class="tag">Lo que la gente sí paga caro</div>
+      <div class="big-fig">el momento</div>
+      <p>Estar en el lugar, con esa gente, esa noche. Eso no se puede reproducir ni descargar.</p>
+    </div>
+  </div>
+  <p class="nota-cadena">Ojo: esta comparación es nuestra, no de los autores. Pero sigue la misma lógica de su escalera.</p>
+</section>
+
+<!-- 07 CUATRO ÁMBITOS -->
+<section class="slide">
+  <div class="kicker">B1 · Los parámetros</div>
+  <h1 style="margin-bottom:1.2vh">Los 4 ámbitos de una experiencia</h1>
+  <div class="ambitos">
+    <div></div><div class="eje">Absorción · la experiencia entra en ti</div><div class="eje">Inmersión · tú entras en la experiencia</div>
+    <div class="eje v">Pasiva</div>
+    <div class="q ent"><div class="t">Entretenimiento</div><div class="d">pasiva + absorción</div><p>Ves y escuchas. Aquí vive casi todo concierto.</p></div>
+    <div class="q est"><div class="t">Estética</div><div class="d">pasiva + inmersión</div><p>Estás en un lugar que te envuelve, aunque no hagas nada.</p></div>
+    <div class="eje v">Activa</div>
+    <div class="q edu"><div class="t">Educativa</div><div class="d">activa + absorción</div><p>Aprendes algo, participas con la cabeza.</p></div>
+    <div class="q esc"><div class="t">Escapista</div><div class="d">activa + inmersión</div><p>Te metes y actúas dentro de la experiencia.</p></div>
+    <div></div><div></div><div></div>
+  </div>
+  <div class="fuente-pie">Pine y Gilmore (1998). Para los autores, las experiencias más fuertes tocan los cuatro ámbitos.</div>
+</section>
+
+<!-- 08 SLEEP NO MORE -->
+<section class="slide">
+  <div class="kicker">B1 · Caso · Ámbito escapista</div>
+  <h1>Punchdrunk · Sleep No More</h1>
+  <div class="caso-wrap">
+    <div>
+      <ul>
+        <li>Un Macbeth casi sin diálogo, montado en un hotel ambientado en los años 30, en Nueva York.</li>
+        <li>No hay butacas: el público recorre el espacio a su ritmo, entre los actores y con máscara.</li>
+        <li>Cada quien arma su propia versión de la obra según por dónde camine y a quién siga.</li>
+        <li>Viene de las artes vivas: es lo efímero de la U3 llevado al extremo.</li>
+      </ul>
+      <div class="letra-chica"><b>Letra chica</b>La inmersión total necesita un espacio propio y un equipo enorme. Lo que sí se puede llevar a escala chica es la idea de dejar que el público elija.</div>
+    </div>
+    <div class="datos">
+      <div class="dt">Ficha</div>
+      <div class="dato-fig"><div class="n">+2 M</div><div class="l">asistentes en Nueva York</div></div>
+      <div class="dato-fig"><div class="n">14 años</div><div class="l">de 2011 a enero de 2025</div></div>
+      <div class="dato-fig"><div class="n">Shanghái</div><div class="l">la producción sigue allá</div></div>
+      <div class="src">Fuentes: comunicado de la producción (nov. 2024); BroadwayWorld (ene. 2025).</div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 PREGUNTA ÁMBITO -->
+<section class="slide slide-dark">
+  <div class="kicker">Pregunta al grupo</div>
+  <h1>Un concierto normal, ¿en qué ámbito vive casi siempre?</h1>
+  <p class="lead">Si la respuesta es "entretenimiento", el más pasivo de los cuatro, ahí está tu oportunidad.</p>
+</section>
+
+<!-- 10 ANTES · ERAS -->
+<section class="slide">
+  <div class="kicker">B2 · Antes · Expectativa y narrativa</div>
+  <h1>Taylor Swift · The Eras Tour</h1>
+  <div class="caso-wrap">
+    <div>
+      <ul>
+        <li><b>La narrativa:</b> el show está armado por "eras", como capítulos de una historia. El público sabe qué viene y se prepara para eso.</li>
+        <li><b>El ritual lo inventó el público:</b> por una línea de una de sus canciones, los fans empezaron a hacer pulseras de la amistad a mano para intercambiarlas en los conciertos.</li>
+        <li>Resultado: el show empieza en la fila, horas antes de que se apaguen las luces.</li>
+      </ul>
+      <div class="letra-chica"><b>Letra chica</b>A esta escala ya es una superproducción. Lo que nos sirve no es el presupuesto, es la lógica de los capítulos.</div>
+    </div>
+    <div class="datos">
+      <div class="dt">Ficha · estimado Pollstar</div>
+      <div class="dato-fig"><div class="n">$2,200 mdd</div><div class="l">la gira más taquillera de la historia</div></div>
+      <div class="dato-fig"><div class="n">10.06 M</div><div class="l">boletos vendidos</div></div>
+      <div class="dato-fig"><div class="n">149</div><div class="l">shows, de 2023 a 2024</div></div>
+      <div class="src">Fuente: Pollstar / AP, 9 de diciembre de 2024. Cifras en dólares.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 ANTES · A TU ESCALA -->
+<section class="slide">
+  <div class="kicker">B2 · Lo que sí se puede copiar</div>
+  <h1>La escala no se copia. <span class="teal">La lógica sí.</span></h1>
+  <div class="concepto-wrap c3" style="margin-top:1.5vh">
+    <div class="fuente"><div class="tag">01</div><h2>Un nombre</h2><p>Tu show no es "toco en el bar el viernes". Tiene un nombre, y con eso ya es un evento.</p></div>
+    <div class="fuente"><div class="tag">02</div><h2>Una historia</h2><p>Un concepto que ordena las canciones: un viaje, una etapa, una pregunta.</p></div>
+    <div class="fuente amb"><div class="tag">03</div><h2>Algo que hacer antes</h2><p>Un código de vestimenta, una canción para aprenderse, algo que llevar o preparar.</p></div>
+  </div>
+  <div class="fuente amb" style="margin-top:3vh;max-width:70ch">
+    <div class="tag">Pregunta al grupo</div>
+    <p style="font-family:var(--disp);font-size:clamp(17px,1.7vw,25px);font-weight:600">¿Qué podría hacer tu público antes de llegar a tu show?</p>
+  </div>
+</section>
+
+<!-- 12 DURANTE · DÍPTICO -->
+<section class="slide">
+  <div class="kicker">B3 · Durante · Interacción y estética</div>
+  <h1>Dos maneras opuestas de diseñar el "durante"</h1>
+  <div class="diptico">
+    <div class="dcaso a">
+      <div class="who">Coldplay</div>
+      <div class="how">Le das una tarea al público</div>
+      <p>La gente deja de ver el show y empieza a hacerlo. La interacción es el centro.</p>
+    </div>
+    <div class="dcaso b">
+      <div class="who">Rosalía</div>
+      <div class="how">Le construyes una imagen</div>
+      <p>El público no hace nada, pero todo está diseñado para cómo lo ve. La estética es el centro.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 COLDPLAY -->
+<section class="slide">
+  <div class="kicker">B3 · Caso · El público como parte del show</div>
+  <h1>Coldplay · Music of the Spheres</h1>
+  <div class="caso-wrap">
+    <div>
+      <ul>
+        <li><b>Pulseras LED:</b> se encienden con la música. Cada asistente es parte de la iluminación del estadio.</li>
+        <li><b>Pisos cinéticos y bicicletas:</b> la gente baila y pedalea para generar energía que alimenta partes del show, como el escenario pequeño.</li>
+        <li>Las pulseras son de material vegetal y se reutilizan de un show a otro.</li>
+      </ul>
+      <div class="letra-chica"><b>Letra chica</b>La interacción funciona porque tiene una historia detrás: el mensaje ecológico. Sin esa historia, pedalear sería un gimmick.</div>
+    </div>
+    <div class="datos">
+      <div class="dt">Ficha · gira 2022 a 2025</div>
+      <div class="dato-fig"><div class="n">+$1,500 mdd</div><div class="l">recaudación total</div></div>
+      <div class="dato-fig"><div class="n">13.1 M</div><div class="l">boletos, récord de asistencia para una gira</div></div>
+      <div class="dato-fig"><div class="n">225</div><div class="l">shows en 43 países</div></div>
+      <div class="src">Fuentes: Billboard Boxscore (dic. 2025) para recaudación y boletos; Pollstar (dic. 2025) para shows y países.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 ROSALÍA -->
+<section class="slide">
+  <div class="kicker">B3 · Caso · El show diseñado para la pantalla</div>
+  <h1>Rosalía · Motomami World Tour</h1>
+  <div class="caso-wrap">
+    <div>
+      <ul>
+        <li>Escenario casi vacío, sin banda a la vista, y un camarógrafo que la sigue durante gran parte del show.</li>
+        <li>Lo que filma se proyecta en dos pantallas verticales, como si estuvieras viendo TikTok en vivo.</li>
+        <li>El origen: lanzó el disco con un concierto en vivo en TikTok, y la gira extendió ese mismo set.</li>
+        <li>El concepto manda en todo: vestuario, cámara, pantallas y coreografía cuentan la misma historia.</li>
+      </ul>
+      <div class="letra-chica"><b>Letra chica</b>La presencia del camarógrafo generó críticas: hubo quien sintió que estaba viendo un video y no un concierto.</div>
+    </div>
+    <div class="datos">
+      <div class="dt">Ficha · gira 2022 a 2023</div>
+      <div class="dato-fig"><div class="n">68</div><div class="l">shows, incluyendo festivales</div></div>
+      <div class="dato-fig"><div class="n">21</div><div class="l">países en tres continentes</div></div>
+      <div class="dato-fig"><div class="n">≈ 2 M</div><div class="l">personas en total</div></div>
+      <div class="src">Fuente: comunicado de Sony Music al cierre de la gira, julio de 2023.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 ARCO -->
+<section class="slide">
+  <div class="kicker">B3 · El arco emocional</div>
+  <h1>Un show tiene curva</h1>
+  <p class="lead">Nadie pone sus canciones en orden aleatorio. Se diseñan subidas, respiros y un clímax.</p>
+  <div class="arco-box">
+    <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ejemplo de curva de energía de un show">
+      <line x1="40" y1="260" x2="970" y2="260" stroke="#E4E1D9" stroke-width="2"/>
+      <line x1="40" y1="30" x2="40" y2="260" stroke="#E4E1D9" stroke-width="2"/>
+      <text x="48" y="24" font-family="IBM Plex Mono, monospace" font-size="13" fill="#6E7679">ENERGÍA / EMOCIÓN</text>
+      <text x="900" y="285" font-family="IBM Plex Mono, monospace" font-size="13" fill="#6E7679">TIEMPO</text>
+      <path d="M40,230 C110,220 140,120 220,110 C290,100 300,170 380,200 C450,225 480,160 560,120 C640,80 700,40 760,45 C820,50 840,170 900,190 C930,198 950,150 970,140" fill="none" stroke="#0F5C5B" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="220" cy="110" r="8" fill="#0F5C5B"/>
+      <circle cx="380" cy="200" r="8" fill="#E8A85C"/>
+      <circle cx="760" cy="45" r="10" fill="#D6772E"/>
+      <circle cx="970" cy="140" r="8" fill="#0F5C5B"/>
+      <text x="170" y="90" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="20" fill="#22282B">Arranque fuerte</text>
+      <text x="335" y="238" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="20" fill="#22282B">Respiro</text>
+      <text x="700" y="30" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="22" fill="#D6772E">Clímax</text>
+      <text x="850" y="128" font-family="Space Grotesk, sans-serif" font-weight="600" font-size="20" fill="#22282B">Encore</text>
+    </svg>
+  </div>
+  <div class="fuente-pie">Ejemplo ilustrativo de una curva posible. Cada show diseña la suya.</div>
+</section>
+
+<!-- 16 DEBATE -->
+<section class="slide slide-dark">
+  <div class="kicker">Debate</div>
+  <h1>¿Diseñas tu show para quien está en la sala o para quien lo ve en el celular?</h1>
+  <div class="concepto-wrap c2" style="margin-top:2vh;max-width:80vw">
+    <div class="fuente" style="background:#2E3539;border-color:#3A4245;border-left-color:var(--teal-soft)"><div class="tag" style="color:#9AA1A3">Postura A</div><p style="color:var(--bone)">Para la sala. El que pagó y está ahí es lo primero.</p></div>
+    <div class="fuente amb" style="background:#2E3539;border-color:#3A4245"><div class="tag" style="color:#9AA1A3">Postura B</div><p style="color:var(--bone)">Para la pantalla. Ahí te descubre el público que todavía no tienes.</p></div>
+  </div>
+</section>
+
+<!-- 17 TRABAJO EN CLASE -->
+<section class="slide">
+  <div class="taller-wrap">
+    <div>
+      <div class="kicker">Trabajo en clase · Equipos de 2 o 3</div>
+      <h1>Baja el caso a tu escala</h1>
+      <p class="tiempo">8 min para resolver · 5 min para comentar</p>
+      <div class="casos-chip"><span>Sleep No More</span><span>Eras Tour</span><span>Coldplay</span><span>Rosalía</span></div>
+    </div>
+    <ol class="steps">
+      <li><span class="sn">01</span><span>Ubica tu caso en los 4 ámbitos: ¿cuál domina?</span></li>
+      <li><span class="sn">02</span><span>¿Cuál ámbito casi no aparece?</span></li>
+      <li><span class="sn">03</span><span>Propón una idea para llevar ese caso a un show de 40 minutos en un bar, sin presupuesto.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 18 DESPUÉS · CHENTE -->
+<section class="slide">
+  <div class="kicker">B4 · Después · Lo que se llevan</div>
+  <h1>Vicente Fernández · Un Azteca en el Azteca</h1>
+  <div class="caso-wrap">
+    <div>
+      <ul>
+        <li>Su despedida de los escenarios, gratis, como agradecimiento a su público por más de 50 años de carrera.</li>
+        <li><b>El ritual de siempre:</b> "Mientras que ustedes no dejen de aplaudir, yo no dejo de cantar". El final del show lo decidía el público.</li>
+        <li>El "después" se volvió producto: el disco y DVD del concierto ganó un Grammy a Mejor Álbum de Regional Mexicana.</li>
+      </ul>
+      <div class="letra-chica"><b>Letra chica</b>Los boletos eran gratis, pero afuera los revendedores los ofrecían hasta en $3,000 pesos. La emoción también tiene precio.</div>
+    </div>
+    <div class="datos">
+      <div class="dt">Ficha · 16 de abril de 2016</div>
+      <div class="dato-fig"><div class="n">+87 mil</div><div class="l">personas en el Estadio Azteca</div></div>
+      <div class="dato-fig"><div class="n">≈ 60</div><div class="l">canciones</div></div>
+      <div class="dato-fig"><div class="n">+4 h</div><div class="l">el concierto más largo de su carrera</div></div>
+      <div class="src">Fuentes: Publimetro (2022); Excélsior (17 de abril de 2016); EFE vía Telemundo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 DESPUÉS · REGRESO A TAYLOR -->
+<section class="slide">
+  <div class="kicker">B4 · De regreso al Eras Tour</div>
+  <h1>Lo que te llevas también se diseña.<br><span class="amber">Y también genera valor.</span></h1>
+  <div class="concepto-wrap c2" style="margin-top:1.5vh">
+    <div class="fuente">
+      <div class="tag">Souvenir hecho por los fans</div>
+      <div class="big-fig">las pulseras</div>
+      <p>Nadie las vende en el merch oficial. Las hace y las intercambia el público, y se vuelven el recuerdo del día.</p>
+    </div>
+    <div class="fuente amb">
+      <div class="tag">El show convertido en producto</div>
+      <div class="big-fig">$261.6 mdd</div>
+      <p>La película del concierto, la más taquillera de la historia en su tipo, a nivel global.</p>
+    </div>
+  </div>
+  <div class="fuente amb" style="margin-top:3vh;max-width:70ch">
+    <div class="tag">Pregunta al grupo</div>
+    <p style="font-family:var(--disp);font-size:clamp(17px,1.7vw,25px);font-weight:600">Cuando se acaba tu show, ¿qué se lleva la gente a su casa, además de la música?</p>
+  </div>
+  <div class="fuente-pie">Fuente de la película: Pollstar, diciembre de 2024.</div>
+</section>
+
+<!-- 20 REGRESO AL PIZARRÓN -->
+<section class="slide">
+  <div class="kicker">Cierre · Regreso al pizarrón</div>
+  <h1>¿Dónde caen los recuerdos del inicio?</h1>
+  <div class="tl">
+    <div><div class="m">Antes</div><div class="q">expectativa · narrativa</div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+    <div><div class="m teal">Durante</div><div class="q">interacción · estética · arco</div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+    <div><div class="m amber">Después</div><div class="q">recuerdo · souvenir · ritual</div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+  </div>
+</section>
+
+<!-- 21 APLÍCALO -->
+<section class="slide">
+  <div class="kicker">Aplícalo a tu proyecto · 3 min · Individual</div>
+  <h1>Completa la frase en tu handout</h1>
+  <div class="frase">
+    Lo que quiero que la gente <b class="teal">sienta</b> en mi show es <span class="blank">&nbsp;</span>,<br>
+    y lo que quiero que <b class="amber">se lleve</b> es <span class="blank">&nbsp;</span>.
+  </div>
+  <p class="nota-cadena">Recital, EP o proyecto independiente: funciona igual.</p>
+</section>
+
+<!-- 22 TAREA -->
+<section class="slide">
+  <div class="kicker">Tarea · Individual</div>
+  <h1>Mapa de experiencia de mi show</h1>
+  <div class="tarea-wrap">
+    <div class="tarea-main">
+      <div class="tag" style="font-family:var(--mono);font-size:clamp(10px,.85vw,12px);letter-spacing:.1em;text-transform:uppercase;color:var(--mid)">Qué incluye</div>
+      <ol>
+        <li><b>Concepto en una frase:</b> la historia que cuenta tu show.</li>
+        <li><b>Línea de tiempo:</b> al menos una decisión concreta para el antes, el durante y el después.</li>
+        <li><b>Los 4 ámbitos:</b> cuál domina, cuál falta y una idea para sumarlo.</li>
+        <li><b>Un momento de interacción:</b> qué hace el público y en qué parte del show.</li>
+        <li><b>Lo que se lleva la gente.</b></li>
+      </ol>
+    </div>
+    <div class="tarea-side">
+      <div class="tarea-meta"><b>Formato</b> · 1 a 2 páginas o tabla<br><b>Proyecto</b> · recital, EP o independiente<br><b>Integrador</b> · punto 4: diseño de experiencia</div>
+      <div class="tarea-bridge">
+        <div class="kicker">Próxima sesión · U6 (II)</div>
+        <p>Innovación en experiencias en vivo y digitales. Trae tu mapa: le vamos a meter la parte de innovación.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="Anterior">←</button>
+  <span class="counter" id="counter">01 / 01</span>
+  <button id="next" aria-label="Siguiente">→</button>
+</div>
+<div class="progress" id="progress"></div>
+
+<script>
+(function(){
+  var slides=document.querySelectorAll('.slide');
+  var total=slides.length, i=0;
+  var counter=document.getElementById('counter'), progress=document.getElementById('progress');
+  function pad(n){return n<10?'0'+n:''+n}
+  function show(n){
+    i=Math.max(0,Math.min(total-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i)});
+    counter.textContent=pad(i+1)+' / '+pad(total);
+    progress.style.width=((i+1)/total*100)+'%';
+    document.body.classList.toggle('on-dark',slides[i].classList.contains('slide-dark'));
+    if(history.replaceState){history.replaceState(null,'','#'+(i+1))}
+  }
+  document.getElementById('prev').onclick=function(){show(i-1)};
+  document.getElementById('next').onclick=function(){show(i+1)};
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1)}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1)}
+    if(e.key==='Home'){show(0)} if(e.key==='End'){show(total-1)}
+  });
+  var h=parseInt((location.hash||'').replace('#',''),10);
+  show(isNaN(h)?0:h-1);
+})();
+</script>
+</body>
+</html>
